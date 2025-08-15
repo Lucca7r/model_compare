@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 """
 Script para treinar e salvar um modelo SVM para classificação de notícias
 do dataset AG News.
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     test_df = pd.DataFrame(dataset['test'])
     print("Dataset carregado com sucesso.")
 
-    # 2. Preparar os dados para treinamento e teste
+
     X_train = train_df['text']
     y_train = train_df['label']
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     X_test = sample_test_df['text']
     y_test = sample_test_df['label']
 
-    # 3. Criar o Pipeline Otimizado
+
     svm_pipeline_otimizado = Pipeline([
         ('tfidf', TfidfVectorizer(stop_words='english',
                                   ngram_range=(1, 2),
@@ -54,7 +54,7 @@ if __name__ == "__main__":
                           dual=True)) 
     ])
 
-    # 4. Treinar o modelo
+    
     
     print("\nIniciando o treinamento do modelo LinearSVC (versão rápida)...")
     start_time = pd.Timestamp.now()
@@ -62,13 +62,12 @@ if __name__ == "__main__":
     end_time = pd.Timestamp.now()
     print(f"Treinamento concluído em: {end_time - start_time}")
 
-    # 5. Salvar o pipeline treinado em um arquivo
     
     nome_arquivo_modelo = 'model/pipeline_svm_agnews.joblib'
     joblib.dump(svm_pipeline_otimizado, nome_arquivo_modelo)
     print(f"\n✅ Modelo salvo com sucesso como '{nome_arquivo_modelo}'")
 
-    # 6. Avaliar e exibir os resultados
+
     print("\nAvaliando o modelo na amostra de teste...")
     predictions = svm_pipeline_otimizado.predict(X_test)
     
