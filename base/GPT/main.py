@@ -40,7 +40,7 @@ sample_test_df = test_df.groupby('label', group_keys=False).apply(lambda x: x.sa
 news_to_classify = sample_test_df['text'].tolist()
 y_test_labels = sample_test_df['label'].tolist()
 
-# --- 2. Definição das Funções Assíncronas ---
+
 def create_prompt(news_text):
 
     return f"""
