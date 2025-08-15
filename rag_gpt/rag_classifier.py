@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 import os
 import sys
 import time
@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from datasets import load_dataset
 from sklearn.metrics import classification_report
 
-# --- 1. Carregamento Robusto da Chave da API ---
+
 print("1. Iniciando configuração e busca pelo arquivo .env...")
 
 try:
@@ -39,7 +39,7 @@ if not api_key:
 client = AsyncOpenAI(api_key=api_key)
 print("Chave da API carregada e cliente OpenAI inicializado com sucesso.")
 
-# --- 2. Configuração do Dataset e Modelos ---
+
 print("\n2. Carregando dataset e configurando modelos...")
 dataset = load_dataset("fancyzhx/ag_news")
 knowledge_base_df = pd.DataFrame(dataset['train']).sample(10000, random_state=42)
@@ -52,32 +52,32 @@ LABEL_NAMES = {0: "World", 1: "Sports", 2: "Business", 3: "Sci/Tech"}
 print("Configuração e carregamento de dados concluídos.")
 
 
-# --- 3. Funções para Construção da Base e Classificação RAG ---
 
-# ######## INÍCIO DA MUDANÇA ##########
+
+
 async def create_embeddings(texts, model, batch_size=1000):
-    """Função para criar embeddings para uma lista de textos EM LOTES."""
+
     all_embeddings = []
     print(f"Iniciando criação de embeddings em lotes de {batch_size}...")
     
-    # Itera sobre a lista de textos em "fatias" (batches)
+
     for i in range(0, len(texts), batch_size):
-        # Pega o lote atual
+
         batch = texts[i:i + batch_size]
         print(f"Processando lote {i//batch_size + 1}/{(len(texts) + batch_size - 1)//batch_size}...")
         
-        # Faz a chamada da API para o lote
+
         response = await client.embeddings.create(input=batch, model=model)
         
-        # Adiciona os embeddings do lote à lista principal
+
         all_embeddings.extend([embedding.embedding for embedding in response.data])
         
-        # Uma pequena pausa para não sobrecarregar a API
+
         await asyncio.sleep(0.5)
 
     print("Criação de embeddings em lotes concluída.")
     return all_embeddings
-# ######## FIM DA MUDANÇA ##########
+
 
 
 async def build_or_load_knowledge_base():
@@ -94,7 +94,6 @@ async def build_or_load_knowledge_base():
     print("\n3. Base de Conhecimento não encontrada. Construindo agora...")
     kb_texts = knowledge_base_df['text'].tolist()
     
-    # A chamada aqui não muda, mas a função agora trabalha em lotes
     embeddings = await create_embeddings(kb_texts, EMBEDDING_MODEL)
     embeddings_array = np.array(embeddings).astype('float32')
     
